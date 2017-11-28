@@ -66,9 +66,37 @@ begin
   end;
 end;
 
-procedure findNeedWords(const str: string; var arr: TStringsArray; blockedword:string; var k: integer);
+procedure findNeedWords(var str: string; var arr: TStringsArray; var k: integer);
 var nullarr: TStringsArray;
-count,maxcount,i,lastpos:byte;
+count,maxcount,lastpos:byte;
+i:integer;
+procedure compString;
+begin
+  if (count > maxcount) then
+  begin
+    maxcount:=count;
+    arr:=nullarr;
+    k:=1;
+    arr[k]:=Copy(str,lastpos+1, i-lastpos-1);
+    Delete(str,i-length(arr[k]), length(arr[k])+1);
+    i:=i-length(arr[k])-1;
+    inc(k);
+  end
+  else
+  begin
+    if (count = maxcount) then
+    begin
+      arr[k]:=Copy(str,lastpos+1, i-lastpos-1);
+      Delete(str,i-length(arr[k]), length(arr[k])+1);
+      i:=i-length(arr[k])-1;
+      inc(k);
+    end;
+  end;
+  count:=0;
+  lastpos:=i;
+  inc(i);
+end;
+
 begin
   nullarr:=arr;
   maxcount:=1;
@@ -89,31 +117,7 @@ begin
     end;
     if (str[i] = ' ') then
     begin
-      if (count > maxcount) then
-      begin
-        if(Copy(str,lastpos+1, i-lastpos-1) <> blockedword) then
-        begin
-          maxcount:=count;
-          arr:=nullarr;
-          k:=1;
-          arr[k]:=Copy(str,lastpos+1, i-lastpos-1);
-          inc(k);
-        end;
-      end
-      else
-      begin
-        if (count = maxcount) then
-        begin
-          if(Copy(str,lastpos+1, i-lastpos-1) <> blockedword) then
-          begin
-            arr[k]:=Copy(str,lastpos+1, i-lastpos-1);
-          end;
-          inc(k);
-        end;
-      end;
-      count:=0;
-      lastpos:=i;
-      inc(i);
+      compString;
     end;
     inc(i);
   end;
@@ -132,31 +136,7 @@ begin
     end;
     if (str[i] = ' ') then
     begin
-      if (count > maxcount) then
-      begin
-        if(Copy(str,lastpos+1, i-lastpos-1) <> blockedword) then
-        begin
-          maxcount:=count;
-          arr:=nullarr;
-          k:=1;
-          arr[k]:=Copy(str,lastpos+1, i-lastpos-1);
-          inc(k);
-        end;
-      end
-      else
-      begin
-        if (count = maxcount) then
-        begin
-          if(Copy(str,lastpos+1, i-lastpos-1) <> blockedword) then
-          begin
-            arr[k]:=Copy(str,lastpos+1, i-lastpos-1);
-          end;
-          inc(k);
-        end;
-      end;
-      count:=0;
-      lastpos:=i;
-      inc(i);
+      compString;
     end;
     inc(i);
   end;
@@ -231,10 +211,8 @@ StrArr:TStringsArray;
 begin
   str:=toDownCase(str);
   writeln(str);
-  LastWord:= searchLastWord(str);
-  //writeln(LastWord);
   newarrN:=1;
-  findNeedWords(str, StrArr,LastWord,newarrN);
+  findNeedWords(str, StrArr,newarrN);
   Writeln('Point 1:');
   for i:=1 to newarrN do
     write(StrArr[i], ' ');
@@ -243,19 +221,20 @@ end;
 
 procedure p2(str:string);
 begin
-  //writeln(str);
-  deleteUtilWord(str);
-  repairString(str);
-  str:=str+' ';
   getFinalFormating(str);
   Writeln('Point 2:');
   writeln(str);
 end;
 
 begin
-  Writeln('Please, enter string');
-  Readln(str);
+  repeat
+    Writeln('Please, enter string');
+    Readln(str);
+    repairString(str);
+  until(Pos(' ', str) <> 0);
+  deleteUtilWord(str);
   repairString(str);
+  str:=str+' ';
   p1(str);
   p2(str);
   Readln;
