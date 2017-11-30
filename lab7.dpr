@@ -16,7 +16,6 @@ begin
   begin
     if (str[i] in uperCase) then
     begin
-      //writeln(str[i]);
       str[i] :=  chr(Ord(str[i]) + 32);
     end;
     toDownCase:=str;
@@ -70,32 +69,32 @@ procedure findNeedWords(var str: string; var arr: TStringsArray; var k: integer)
 var nullarr: TStringsArray;
 count,maxcount,lastpos:byte;
 i:integer;
-procedure compString;
-begin
-  if (count > maxcount) then
+  procedure compString;
   begin
-    maxcount:=count;
-    arr:=nullarr;
-    k:=1;
-    arr[k]:=Copy(str,lastpos+1, i-lastpos-1);
-    Delete(str,i-length(arr[k]), length(arr[k])+1);
-    i:=i-length(arr[k])-1;
-    inc(k);
-  end
-  else
-  begin
-    if (count = maxcount) then
+    if (count > maxcount) then
     begin
+      maxcount:=count;
+      arr:=nullarr;
+      k:=1;
       arr[k]:=Copy(str,lastpos+1, i-lastpos-1);
       Delete(str,i-length(arr[k]), length(arr[k])+1);
       i:=i-length(arr[k])-1;
       inc(k);
+    end
+    else
+    begin
+      if (count = maxcount) then
+      begin
+        arr[k]:=Copy(str,lastpos+1, i-lastpos-1);
+        Delete(str,i-length(arr[k]), length(arr[k])+1);
+        i:=i-length(arr[k])-1;
+        inc(k);
+      end;
     end;
+    count:=0;
+    lastpos:=i;
+    inc(i);
   end;
-  count:=0;
-  lastpos:=i;
-  inc(i);
-end;
 
 begin
   nullarr:=arr;
@@ -104,7 +103,6 @@ begin
   lastpos:=0;
   count:=0;
   i:=2;
- // for i:=2 to Length(str) do
   while(i <= Length(str)) do
   begin
     if(str[i] > str[i-1]) then
@@ -113,7 +111,6 @@ begin
     begin
       if(pos(' ', copy(str,i,length(str)-i)) <> 0) then
         i:=pos(' ', copy(str,i,length(str)-i))+i-1;
-       // count:=0;
     end;
     if (str[i] = ' ') then
     begin
@@ -124,7 +121,6 @@ begin
   i:=2;
   lastpos:=0;
   count:=0;
- // for i:=2 to Length(str) do
   while(i <= Length(str)) do
   begin
     if((str[i] < str[i-1]) and (str[i] <> ' ')) then
@@ -206,7 +202,6 @@ end;
 
 procedure p1(str:string);
 var i,newarrN:integer;
-LastWord:string;
 StrArr:TStringsArray;
 begin
   str:=toDownCase(str);
